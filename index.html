@@ -1,1 +1,87 @@
-<h1>Olá! Sejam conhecidas por Deus as vossas petições!</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orai | Pedidos de Oração</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="hero">
+        <h1>Olá! Sejam conhecidas por Deus as vossas petições!</h1>
+        <p>
+          Cadastre e acompanhe pedidos de oração de forma simples, organizada e
+          com armazenamento local no navegador.
+        </p>
+      </section>
+
+      <section class="layout">
+        <article class="card">
+          <h2>Novo pedido</h2>
+          <p id="form-message" class="form-message" aria-live="polite"></p>
+          <form id="request-form">
+            <div class="field">
+              <label for="nome">Nome do solicitante</label>
+              <input
+                id="nome"
+                name="nome"
+                type="text"
+                placeholder="Ex.: Maria"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="pedido">Pedido de oração</label>
+              <textarea
+                id="pedido"
+                name="pedido"
+                placeholder="Descreva o motivo do pedido"
+                required
+              ></textarea>
+            </div>
+
+            <div class="field">
+              <label for="data">Data do pedido</label>
+              <input id="data" name="data" type="date" required />
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="button-primary">
+                Salvar pedido
+              </button>
+              <button type="reset" class="button-secondary">Limpar</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="card">
+          <h2>Pedidos cadastrados</h2>
+
+          <div class="summary" aria-label="Resumo dos pedidos">
+            <div class="summary-item">
+              <strong id="total-count">0</strong>
+              <span>Total</span>
+            </div>
+            <div class="summary-item">
+              <strong id="open-count">0</strong>
+              <span>Em oração</span>
+            </div>
+            <div class="summary-item">
+              <strong id="responded-count">0</strong>
+              <span>Respondidos</span>
+            </div>
+          </div>
+
+          <p id="empty-state" class="empty-state">
+            Nenhum pedido cadastrado até o momento.
+          </p>
+          <ul id="request-list" class="request-list" aria-live="polite"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
