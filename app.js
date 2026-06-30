@@ -86,26 +86,47 @@ function listarPedidos() {
       const item = document.createElement("li");
       item.className = `request-item${pedido.respondido ? " responded" : ""}`;
 
-      item.innerHTML = `
-        <div class="request-header">
-          <div>
-            <h3>${pedido.nome}</h3>
-            <span class="request-date">${formatarData(pedido.data)}</span>
-          </div>
-          <span class="badge ${pedido.respondido ? "badge-responded" : "badge-open"}">
-            ${pedido.respondido ? "Respondido" : "Em oração"}
-          </span>
-        </div>
-        <p class="request-body">${pedido.pedido}</p>
-        <div class="request-actions">
-          <button type="button" class="button-success" data-action="toggle" data-id="${pedido.id}">
-            ${pedido.respondido ? "Reabrir pedido" : "Marcar como respondido"}
-          </button>
-          <button type="button" class="button-danger" data-action="remove" data-id="${pedido.id}">
-            Remover
-          </button>
-        </div>
-      `;
+      const header = document.createElement("div");
+      header.className = "request-header";
+
+      const titleGroup = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = pedido.nome;
+      const date = document.createElement("span");
+      date.className = "request-date";
+      date.textContent = formatarData(pedido.data);
+      titleGroup.append(title, date);
+
+      const badge = document.createElement("span");
+      badge.className = `badge ${pedido.respondido ? "badge-responded" : "badge-open"}`;
+      badge.textContent = pedido.respondido ? "Respondido" : "Em oração";
+      header.append(titleGroup, badge);
+
+      const body = document.createElement("p");
+      body.className = "request-body";
+      body.textContent = pedido.pedido;
+
+      const actions = document.createElement("div");
+      actions.className = "request-actions";
+
+      const toggleButton = document.createElement("button");
+      toggleButton.type = "button";
+      toggleButton.className = "button-success";
+      toggleButton.dataset.action = "toggle";
+      toggleButton.dataset.id = pedido.id;
+      toggleButton.textContent = pedido.respondido
+        ? "Reabrir pedido"
+        : "Marcar como respondido";
+
+      const removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.className = "button-danger";
+      removeButton.dataset.action = "remove";
+      removeButton.dataset.id = pedido.id;
+      removeButton.textContent = "Remover";
+
+      actions.append(toggleButton, removeButton);
+      item.append(header, body, actions);
 
       listElement.appendChild(item);
     });
@@ -155,6 +176,12 @@ function removerPedido(id) {
 }
 
 form.addEventListener("submit", adicionarPedido);
+form.addEventListener("reset", () => {
+  window.setTimeout(() => {
+    dateInput.value = today;
+    messageElement.textContent = "";
+  }, 0);
+});
 
 listElement.addEventListener("click", (event) => {
   const button = event.target.closest("button");
