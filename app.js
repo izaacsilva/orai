@@ -9,6 +9,7 @@ const DEFAULT_FILTERS = {
 
 const form = document.getElementById("request-form");
 const nameInput = document.getElementById("nome");
+const contactInput = document.getElementById("contato");
 const requestInput = document.getElementById("pedido");
 const dateInput = document.getElementById("data");
 const searchFilterInput = document.getElementById("search-filter");
@@ -213,6 +214,10 @@ function listarPedidos() {
       body.className = "request-body";
       body.textContent = pedido.pedido;
 
+      const contact = document.createElement("p");
+      contact.className = "request-contact";
+      contact.textContent = `Contato: ${pedido.contato || "Não informado"}`;
+
       const actions = document.createElement("div");
       actions.className = "request-actions";
 
@@ -233,7 +238,7 @@ function listarPedidos() {
       removeButton.textContent = "Remover";
 
       actions.append(toggleButton, removeButton);
-      item.append(header, body, actions);
+      item.append(header, body, contact, actions);
 
       listElement.appendChild(item);
     });
@@ -243,10 +248,11 @@ function adicionarPedido(event) {
   event.preventDefault();
 
   const nome = nameInput.value.trim();
+  const contato = contactInput.value.trim();
   const pedido = requestInput.value.trim();
   const data = dateInput.value;
 
-  if (!nome || !pedido || !data) {
+  if (!nome || !contato || !pedido || !data) {
     exibirMensagem("Preencha todos os campos antes de salvar.");
     return;
   }
@@ -255,6 +261,7 @@ function adicionarPedido(event) {
   pedidos.unshift({
     id: gerarId(),
     nome,
+    contato,
     pedido,
     data,
     respondido: false,
