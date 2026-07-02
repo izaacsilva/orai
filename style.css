@@ -202,6 +202,13 @@ button:active {
   line-height: 1.6;
 }
 
+.request-contact {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .request-item.responded .request-body {
   text-decoration: line-through;
   color: var(--muted);
