@@ -59,6 +59,58 @@
         <article class="card">
           <h2>Pedidos cadastrados</h2>
 
+          <section class="filters" aria-labelledby="filters-title">
+            <div class="filters-header">
+              <h3 id="filters-title">Filtros</h3>
+              <button
+                id="clear-filters"
+                type="button"
+                class="button-secondary"
+              >
+                Limpar filtros
+              </button>
+            </div>
+
+            <div class="filters-grid">
+              <div class="field">
+                <label for="search-filter">Buscar por nome ou pedido</label>
+                <input
+                  id="search-filter"
+                  name="search-filter"
+                  type="search"
+                  placeholder="Ex.: Maria ou saúde"
+                />
+              </div>
+
+              <div class="field">
+                <label for="status-filter">Status</label>
+                <select id="status-filter" name="status-filter">
+                  <option value="todos">Todos</option>
+                  <option value="em-oracao">Em oração</option>
+                  <option value="respondidos">Respondidos</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="start-date-filter">Data inicial</label>
+                <input
+                  id="start-date-filter"
+                  name="start-date-filter"
+                  type="date"
+                />
+              </div>
+
+              <div class="field">
+                <label for="end-date-filter">Data final</label>
+                <input
+                  id="end-date-filter"
+                  name="end-date-filter"
+                  type="date"
+                />
+              </div>
+            </div>
+          </section>
+
           <div class="summary" aria-label="Resumo dos pedidos">
             <div class="summary-item">
               <strong id="total-count">0</strong>

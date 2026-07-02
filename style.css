@@ -79,7 +79,8 @@ body {
 }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
@@ -128,6 +129,33 @@ button:active {
 .button-secondary {
   background: var(--surface-alt);
   color: var(--text);
+}
+
+.filters {
+  margin-bottom: 20px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-alt);
+}
+
+.filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filters-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .summary {
@@ -252,6 +280,7 @@ button:active {
 
 @media (max-width: 768px) {
   .layout,
+  .filters-grid,
   .summary {
     grid-template-columns: 1fr;
   }
@@ -263,5 +292,15 @@ button:active {
 
   .request-header {
     flex-direction: column;
+  }
+
+  .filters-header,
+  .actions {
+    flex-direction: column;
+  }
+
+  .filters-header button,
+  .actions button {
+    width: 100%;
   }
 }

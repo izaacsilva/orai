@@ -12,6 +12,7 @@ O projeto foi pensado como um exemplo pequeno para praticar desenvolvimento com 
 - Adicionar novos pedidos
 - Marcar pedidos como respondidos
 - Remover pedidos cadastrados
+- Filtrar pedidos por status, texto e intervalo de datas
 - Salvar os dados localmente com `localStorage`
 
 ## Estrutura
@@ -48,7 +49,23 @@ Como este projeto não possui backend nem dependências externas, basta abrir o 
 2. Escreva o pedido de oração
 3. Informe a data
 4. Clique em **Salvar pedido**
-5. Use os botões da lista para marcar como respondido ou remover
+5. Use os filtros para localizar pedidos por status, nome, conteúdo ou período
+6. Use os botões da lista para marcar como respondido ou remover
+
+## Filtragem
+
+Os pedidos cadastrados podem ser filtrados com combinações dos seguintes critérios:
+
+- **Status**: todos, em oração ou respondidos
+- **Busca por texto**: pesquisa por nome do solicitante e conteúdo do pedido
+- **Intervalo de datas**: data inicial e data final
+
+Comportamento esperado:
+
+- Ao abrir a aplicação, todos os pedidos são exibidos
+- Os filtros ativos são salvos no `localStorage` e reaplicados ao recarregar a página
+- O resumo mostra a quantidade de itens visíveis com os filtros atuais
+- Quando existem pedidos cadastrados, mas nenhum corresponde aos filtros, a interface exibe uma mensagem específica para esse caso
 
 ## Próximos passos sugeridos
 
