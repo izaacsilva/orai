@@ -1,9 +1,21 @@
 const STORAGE_KEY = "orai-pedidos";
+const FILTERS_STORAGE_KEY = "orai-filtros";
+const DEFAULT_FILTERS = {
+  search: "",
+  status: "todos",
+  startDate: "",
+  endDate: "",
+};
 
 const form = document.getElementById("request-form");
 const nameInput = document.getElementById("nome");
 const requestInput = document.getElementById("pedido");
 const dateInput = document.getElementById("data");
+const searchFilterInput = document.getElementById("search-filter");
+const statusFilterInput = document.getElementById("status-filter");
+const startDateFilterInput = document.getElementById("start-date-filter");
+const endDateFilterInput = document.getElementById("end-date-filter");
+const clearFiltersButton = document.getElementById("clear-filters");
 const listElement = document.getElementById("request-list");
 const emptyStateElement = document.getElementById("empty-state");
 const messageElement = document.getElementById("form-message");
@@ -12,7 +24,28 @@ const openElement = document.getElementById("open-count");
 const respondedElement = document.getElementById("responded-count");
 
 const today = new Date().toISOString().split("T")[0];
+let activeFilters = carregarFiltros();
+
 dateInput.value = today;
+
+function normalizarTexto(texto) {
+  return texto.trim().toLocaleLowerCase("pt-BR");
+}
+
+function normalizarFiltros(filtros = {}) {
+  const startDate = filtros.startDate || "";
+  const endDate = filtros.endDate || "";
+
+  return {
+    search: typeof filtros.search === "string" ? filtros.search.trim() : "",
+    status:
+      filtros.status === "em-oracao" || filtros.status === "respondidos"
+        ? filtros.status
+        : "todos",
+    startDate,
+    endDate,
+  };
+}
 
 function carregarPedidos() {
   const data = localStorage.getItem(STORAGE_KEY);
@@ -30,6 +63,26 @@ function carregarPedidos() {
 
 function salvarPedidos(pedidos) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(pedidos));
+}
+
+function carregarFiltros() {
+  const data = localStorage.getItem(FILTERS_STORAGE_KEY);
+  if (!data) {
+    return { ...DEFAULT_FILTERS };
+  }
+
+  try {
+    return normalizarFiltros(JSON.parse(data));
+  } catch {
+    return { ...DEFAULT_FILTERS };
+  }
+}
+
+function salvarFiltros(filtros) {
+  localStorage.setItem(
+    FILTERS_STORAGE_KEY,
+    JSON.stringify(normalizarFiltros(filtros))
+  );
 }
 
 function gerarId() {
@@ -68,19 +121,73 @@ function atualizarResumo(pedidos) {
   openElement.textContent = pedidos.length - respondidos;
 }
 
+function obterPeriodoNormalizado({ startDate, endDate }) {
+  if (startDate && endDate && startDate > endDate) {
+    return { startDate: endDate, endDate: startDate };
+  }
+
+  return { startDate, endDate };
+}
+
+function aplicarFiltros(pedidos, filtros) {
+  const { search, status } = normalizarFiltros(filtros);
+  const { startDate, endDate } = obterPeriodoNormalizado(filtros);
+  const normalizedSearch = normalizarTexto(search);
+
+  return pedidos.filter((pedido) => {
+    const matchesSearch =
+      !normalizedSearch ||
+      normalizarTexto(`${pedido.nome} ${pedido.pedido}`).includes(normalizedSearch);
+
+    const matchesStatus =
+      status === "todos" ||
+      (status === "respondidos" && pedido.respondido) ||
+      (status === "em-oracao" && !pedido.respondido);
+
+    const matchesStartDate = !startDate || pedido.data >= startDate;
+    const matchesEndDate = !endDate || pedido.data <= endDate;
+
+    return matchesSearch && matchesStatus && matchesStartDate && matchesEndDate;
+  });
+}
+
+function atualizarCamposDeFiltro() {
+  searchFilterInput.value = activeFilters.search;
+  statusFilterInput.value = activeFilters.status;
+  startDateFilterInput.value = activeFilters.startDate;
+  endDateFilterInput.value = activeFilters.endDate;
+}
+
+function atualizarFiltros(novosFiltros) {
+  activeFilters = normalizarFiltros({ ...activeFilters, ...novosFiltros });
+  salvarFiltros(activeFilters);
+  atualizarCamposDeFiltro();
+  listarPedidos();
+}
+
 function listarPedidos() {
   const pedidos = carregarPedidos();
-  atualizarResumo(pedidos);
+  const pedidosFiltrados = aplicarFiltros(pedidos, activeFilters);
+
+  atualizarResumo(pedidosFiltrados);
   listElement.innerHTML = "";
 
   if (pedidos.length === 0) {
+    emptyStateElement.textContent = "Nenhum pedido cadastrado até o momento.";
+    emptyStateElement.hidden = false;
+    return;
+  }
+
+  if (pedidosFiltrados.length === 0) {
+    emptyStateElement.textContent =
+      "Nenhum pedido encontrado com os filtros atuais.";
     emptyStateElement.hidden = false;
     return;
   }
 
   emptyStateElement.hidden = true;
 
-  pedidos
+  pedidosFiltrados
     .sort((a, b) => new Date(b.data) - new Date(a.data))
     .forEach((pedido) => {
       const item = document.createElement("li");
@@ -183,6 +290,29 @@ form.addEventListener("reset", () => {
   }, 0);
 });
 
+searchFilterInput.addEventListener("input", (event) => {
+  atualizarFiltros({ search: event.target.value });
+});
+
+statusFilterInput.addEventListener("change", (event) => {
+  atualizarFiltros({ status: event.target.value });
+});
+
+startDateFilterInput.addEventListener("change", (event) => {
+  atualizarFiltros({ startDate: event.target.value });
+});
+
+endDateFilterInput.addEventListener("change", (event) => {
+  atualizarFiltros({ endDate: event.target.value });
+});
+
+clearFiltersButton.addEventListener("click", () => {
+  activeFilters = { ...DEFAULT_FILTERS };
+  salvarFiltros(activeFilters);
+  atualizarCamposDeFiltro();
+  listarPedidos();
+});
+
 listElement.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button) {
@@ -200,4 +330,5 @@ listElement.addEventListener("click", (event) => {
   }
 });
 
+atualizarCamposDeFiltro();
 listarPedidos();
